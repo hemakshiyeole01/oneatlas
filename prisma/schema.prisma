@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ModelType {
+  TEXT
+  MULTIMODAL
+  IMAGE
+  AUDIO
+  EMBEDDING
+}
+
+model Lab {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  country     String?
+  website     String?
+  models      Model[]
+}
+
+model Provider {
+  id          String          @id @default(cuid())
+  name        String          @unique
+  slug        String          @unique
+  description String?
+  website     String?
+  listings    ModelProvider[]
+}
+
+model Model {
+  id                       String          @id @default(cuid())
+  name                     String
+  slug                     String          @unique
+  description              String?
+  type                     ModelType       @default(TEXT)
+  contextWindow            Int
+  maxOutput                Int
+  inputModalities          String[]
+  outputModalities         String[]
+  supportsReasoning        Boolean         @default(false)
+  supportsTools            Boolean         @default(false)
+  supportsVision           Boolean         @default(false)
+  supportsStructuredOutput Boolean         @default(false)
+  openWeights              Boolean         @default(false)
+  deprecated               Boolean         @default(false)
+  releasedAt               DateTime
+  createdAt                DateTime        @default(now())
+  updatedAt                DateTime        @updatedAt
+  labId                    String
+  lab                      Lab             @relation(fields: [labId], references: [id], onDelete: Cascade)
+  providers                ModelProvider[]
+  scores                   BenchmarkScore[]
+
+  @@index([labId])
+  @@index([releasedAt])
+  @@index([contextWindow])
+}
+
+model ModelProvider {
+  id             String   @id @default(cuid())
+  modelId        String
+  providerId     String
+  inputPrice     Float    // USD per 1M input tokens
+  outputPrice    Float    // USD per 1M output tokens
+  cacheReadPrice Float?
+  model          Model    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  provider       Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([modelId, providerId])
+  @@index([providerId])
+}
+
+model Benchmark {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  slug        String           @unique
+  category    String           // e.g. coding, reasoning, knowledge, math
+  description String?
+  scores      BenchmarkScore[]
+}
+
+model BenchmarkScore {
+  id          String    @id @default(cuid())
+  modelId     String
+  benchmarkId String
+  score       Float     // 0 to 100
+  model       Model     @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  benchmark   Benchmark @relation(fields: [benchmarkId], references: [id], onDelete: Cascade)
+
+  @@unique([modelId, benchmarkId])
+  @@index([benchmarkId, score])
+}
