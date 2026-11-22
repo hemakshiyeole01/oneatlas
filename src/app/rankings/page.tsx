@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useApi } from "@/lib/useApi";
 import { ErrorBox, Loading, OpenBadge } from "@/components/ui";
+import { useRouter } from "next/navigation";
 
 type Benchmark = { name: string; slug: string; category: string; description: string | null };
 type RankingsResponse = {
@@ -24,6 +25,7 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 export default function RankingsPage() {
   const [category, setCategory] = useState("");
   const [benchmark, setBenchmark] = useState("");
+  const router = useRouter();
 
   // filter options (categories + benchmarks) come from the API too
   const opts = useApi<RankingsResponse>("/api/rankings?limit=1");
@@ -105,10 +107,19 @@ export default function RankingsPage() {
                   </thead>
                   <tbody>
                     {data.data.map((r) => (
-                      <tr key={r.model.id} className="border-t border-neutral-100">
+                       <tr
+                        key={r.model.id}
+                        onClick={() => router.push(`/models/${r.model.slug}`)}
+                        className="cursor-pointer border-t border-neutral-100 hover:bg-neutral-50">
                         <td className="px-4 py-2.5 font-semibold tabular-nums">{r.rank}</td>
                         <td className="px-4 py-2.5">
-                          <Link href={`/models/${r.model.slug}`} className="font-medium hover:underline">{r.model.name}</Link>
+                          <Link
+                            href={`/models/${r.model.slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="font-medium hover:underline"
+                          >
+                            {r.model.name}
+                          </Link>
                           <div className="text-xs text-neutral-500">{r.model.lab.name}</div>
                         </td>
                         <td className="px-4 py-2.5"><OpenBadge open={r.model.openWeights} /></td>
