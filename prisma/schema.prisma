@@ -43,6 +43,8 @@ model Model {
   type                     ModelType       @default(TEXT)
   contextWindow            Int
   maxOutput                Int
+  lowestInputPrice         Float?
+  lowestOutputPrice        Float?
   inputModalities          String[]
   outputModalities         String[]
   supportsReasoning        Boolean         @default(false)
@@ -62,6 +64,7 @@ model Model {
   @@index([labId])
   @@index([releasedAt])
   @@index([contextWindow])
+  @@index([lowestInputPrice])
 }
 
 model ModelProvider {

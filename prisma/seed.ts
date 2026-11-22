@@ -216,8 +216,27 @@ async function main() {
       return [{ modelId: modelId[b.slug], benchmarkId: benchId[bd.slug], score }];
     });
   });
-  await prisma.benchmarkScore.createMany({ data: scores });
 
+  await prisma.benchmarkScore.createMany({ data: scores });
+    // denormalized lowest prices, used for fast price sorting
+  const lowest = new Map<string, { inp: number; out: number }>();
+
+  for (const l of listings) {
+    const cur = lowest.get(l.modelId) ?? { inp: Infinity, out: Infinity };
+    lowest.set(l.modelId, {
+      inp: Math.min(cur.inp, l.inputPrice),
+      out: Math.min(cur.out, l.outputPrice),
+    });
+  }
+  
+  await prisma.$transaction(
+    [...lowest.entries()].map(([id, v]) =>
+      prisma.model.update({
+        where: { id },
+        data: { lowestInputPrice: v.inp, lowestOutputPrice: v.out },
+      })
+    )
+  );
   console.log(`Seeded: ${labs.length} labs, ${providers.length} providers, ${built.length} models, ${listings.length} provider listings, ${benchDefs.length} benchmarks, ${scores.length} scores.`);
 }
 
