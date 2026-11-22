@@ -79,4 +79,4 @@ npm run dev
 - Sample data only; a real ingestion pipeline (for example from a public models API) would replace the seed
 - Overall ranking averages whatever scores a model has, so models with fewer scores are compared on fewer benchmarks
 - Filters are not yet stored in the URL for the models page
-- No authentication, caching layer or automated tests yet
+- Rate limiting is in-memory and per-instance; production would use a shared store such as Redis
