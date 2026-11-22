@@ -71,8 +71,9 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-        <Link href="/models" className="text-lg font-bold tracking-tight">
+      <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
+                <Link href="/models" className="flex items-center gap-2 text-lg font-bold tracking-tight">
+          <span className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-900 text-sm text-white">O</span>
           OneAtlas
         </Link>
 

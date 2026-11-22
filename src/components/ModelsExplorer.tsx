@@ -352,7 +352,7 @@ export default function ModelsExplorer() {
       {/* compare bar */}
       {selected.length > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-neutral-200 bg-white p-3 shadow-lg">
-          <div className="mx-auto flex max-w-7xl items-center gap-3">
+          <div className="mx-auto flex max-w-[1440px] items-center gap-3">
             <span className="text-sm">{selected.length} selected (max 4)</span>
             <button onClick={() => setSelected([])} className="text-sm text-neutral-500 underline">Clear</button>
             <Link

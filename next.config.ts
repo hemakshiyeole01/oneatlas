@@ -10,9 +10,18 @@ const CACHED_API_ROUTES = [
   "/api/providers",
   "/api/providers/:slug",
   "/api/search",
+  "/api/stats",
 ];
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/turbopack"],
+        as: "*.css",
+      },
+    },
+  },
   async headers() {
     return CACHED_API_ROUTES.map((source) => ({
       source,

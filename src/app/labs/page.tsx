@@ -25,7 +25,7 @@ export default function LabsPage() {
       {data && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.data.map((l) => (
-            <Link key={l.id} href={`/labs/${l.slug}`} className="rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-neutral-400">
+            <Link key={l.id} href={`/labs/${l.slug}`} className="rounded-lg border border-neutral-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-neutral-400 hover:shadow-md">
               <div className="flex items-start justify-between gap-2">
                 <h2 className="font-semibold">{l.name}</h2>
                 <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs">{l.modelCount} models</span>
